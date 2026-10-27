@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathHeroes</title>
+    <style>
+        :root {
+            --primary: #4a4e69;
+            --secondary: #9a8c98;
+            --accent: #f2e9e1;
+            --dark: #22223b;
+            --success: #4caf50;
+            --danger: #e63946;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: var(--dark);
+            color: white;
+            overflow: hidden;
+        }
+
+        .screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* Loading Screen */
+        #loading-screen {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid rgba(255,255,255,0.1);
+            border-top: 8px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* UI Elements */
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            letter-spacing: 2px;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .grid {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 180px;
+        }
+
+        .card:hover, .card.selected {
+            border-color: var(--accent);
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.05);
+        }
+
+        .avatar-placeholder {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        footer {
+            position: absolute;
+            bottom: 15px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            letter-spacing: 1px;
+        }
+
+        /* Intro Screen */
+        .intro-box {
+            max-width: 600px;
+            background: rgba(0,0,0,0.4);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Gameplay Elements */
+        .hud {
+            position: absolute;
+            top: 20px;
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            background: rgba(0,0,0,0.3);
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+
+        .arena {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 300px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .actor {
+            position: absolute;
+            bottom: 40px;
+            font-size: 4rem;
+            transition: all 0.3s ease;
+        }
+
+        #hero-sprite { left: 10%; }
+        #monster-sprite { right: 10%; }
+
+        .health-bar {
+            width: 80px;
+            height: 8px;
+            background: #555;
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .health-fill {
+            height: 100%;
+            background: var(--success);
+            width: 100%;
+            transition: width 0.3s ease;
+        }
+
+        #monster-sprite .health-fill {
+            background: var(--danger);
+        }
+
+        .math-box {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 15px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        #equation {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .math-box input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.5rem;
+            border-radius: 8px;
+            border: none;
+            text-align: center;
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        /* Projectile FX */
+        .laser {
+            position: absolute;
+            height: 6px;
+            background: #00ffff;
+            box-shadow: 0 0 10px #00ffff;
+            border-radius: 3px;
+            top: 60%;
+            left: 20%;
+            width: 0;
+            z-index: 10;
+        }
+
+        @keyframes fireLaser {
+            0% { left: 20%; width: 0; opacity: 1; }
+            50% { width: 50px; }
+            100% { left: 80%; width: 0; opacity: 0; }
+        }
+
+        /* Select drop downs */
+        select {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            background: var(--primary);
+            color: white;
+            border: 1px solid var(--accent);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. LOADING SCREEN -->
+    <div id="loading-screen" class="screen active">
+        <div class="spinner"></div>
+        <h2 id="loading-text">Loading Assets...</h2>
+    </div>
+
+    <!-- 2. MAIN MENU SCREEN -->
+    <div id="main-menu" class="screen">
+        <h1>MathHeroes</h1>
+        
+        <div style="margin-bottom: 25px;">
+            <label for="lang-select" style="margin-right: 10px;">🌐</label>
+            <select id="lang-select" onchange="changeLanguage(this.value)">
+                <option value="en-US">English (US)</option>
+                <option value="en-GB">English (GB)</option>
+                <option value="nl">Dutch</option>
+                <option value="es">Español</option>
+                <option value="fr">Français</option>
+                <option value="el">Greek</option>
+                <option value="id">Indonesia</option>
+                <option value="it">Italiano</option>
+            </select>
+        </div>
+
+        <button class="btn" id="btn-play" onclick="showScreen('setup-screen')">Play Game</button>
+        <button class="btn" id="btn-shop" onclick="openShop()">Cosmetic Shop</button>
+
+        <footer id="studio-footer">© 2026 Zakir Studio. All Rights Reserved.</footer>
+    </div>
+
+    <!-- 3. SETUP SCREEN (Character & Math Type Selection) -->
+    <div id="setup-screen" class="screen">
+        <h2 id="title-setup">Prepare Your Hero</h2>
+        
+        <!-- Character Choices -->
+        <h3 id="label-hero" style="margin-top:15px;">Choose Your Character:</h3>
+        <div class="grid">
+            <div class="card selected" id="char-0" onclick="selectCharacter(0)">
+                <div class="avatar-placeholder">🧙‍♂️</div>
+                <div style="font-weight: bold;">Alpha</div>
+            </div>
+            <div class="card" id="char-1" onclick="selectCharacter(1)">
+                <div class="avatar-placeholder">🥷</div>
+                <div style="font-weight: bold;">Sigma</div>
+            </div>
+            <div class="card" id="char-2" onclick="selectCharacter(2)">
+                <div class="avatar-placeholder">🤖</div>
+                <div style="font-weight: bold;">Omega</div>
+            </div>
+        </div>
+
+        <!-- Math Mode Choices -->
+        <h3 id="label-math">Choose Math Type:</h3>
+        <div class="grid">
+            <button class="btn" id="btn-add" onclick="startAdventure('+')">Addition</button>
+            <button class="btn" id="btn-sub" onclick="startAdventure('-')">Subtraction</button>
+            <button class="btn" id="btn-mult" onclick="startAdventure('*')">Multiplication</button>
+            <button class="btn" id="btn-div" onclick="startAdventure('/')">Division</button>
+        </div>
+        
+        <button class="btn" style="background:#333;" id="btn-back-setup" onclick="showScreen('main-menu')">Back</button>
+    </div>
+
+    <!-- 4. INTRO CINEMATIC SCREEN -->
+    <div id="intro-screen" class="screen">
+        <div class="intro-box">
+            <h2 id="title-invasion" style="color:var(--danger); margin-bottom: 20px;">MONSTER INVASION!</h2>
+            <p id="text-intro" style="font-size: 1.2rem; line-height: 1.6; margin-bottom: 30px;">
+                Dark forces have entered the sector. The city defenses are down! Grab your calculation blaster immediately. Use your mathematical speed to power the energy core and neutralize the threat before they breach the gates!
+            </p>
+            <button class="btn" id="btn-skip" onclick="showScreen('battle-screen'); initBattle();">Equip Blaster & Fight</button>
+Hero: Default Blaster
+🪙 0
+🧙‍♂️
+👹
+
+2 + 2
+
+Fire Blaster!
+Retreat
+Cosmetic Shop
+Your Coins: 🪙 0
+🔫
+Laser Blaster
+20 Coins
+💥
+Plasma Cannon
+50 Coins
+
+
+🧣
+Hero Cape
+15 Coins
+
+
+🛡️
+Cyber Armor
+40 Coins
+
+Back to Menu
+// --- Translations Dictionary ---
+const translations = {
+'en-US': {
+loading: "Loading Assets...", play: "Play Game", shop: "Cosmetic Shop",
+setupTitle: "Prepare Your Hero", chooseHero: "Choose Your Character:",
+chooseMath: "Choose Math Type:", add: "Addition", sub: "Subtraction",
+mult: "Multiplication", div: "Division", back: "Back",
+invasion: "MONSTER INVASION!", introText: "Dark forces have entered the sector. The city defenses are down! Grab your calculation blaster immediately. Use your mathematical speed to power the energy core and neutralize the threat before they breach the gates!",
+skip: "Equip Blaster & Fight", fire: "Fire Blaster!", retreat: "Retreat"
+},
+'en-GB': {
+loading: "Loading Assets...", play: "Play Game", shop: "Cosmetic Shop",
+setupTitle: "Prepare Your Hero", chooseHero: "Choose Your Character:",
+chooseMath: "Choose Maths Type:", add: "Addition", sub: "Subtraction",
+mult: "Times Tables", div: "Division", back: "Back",
+invasion: "MONSTER INVASION!", introText: "Dark forces have entered the sector. The city defences are down! Grab your calculation blaster immediately. Use your mathematical speed to power the energy core and neutralise the threat before they breach the gates!",
+skip: "Equip Blaster & Fight", fire: "Fire Blaster!", retreat: "Retreat"
+},
+'nl': {
+loading: "Activa laden...", play: "Speel Spel", shop: "Cosmetische Winkel",
+setupTitle: "Bereid Je Held Voor", chooseHero: "Kies Je Personage:",
+chooseMath: "Kies Rekentype:", add: "Optellen", sub: "Aftrekken",
+mult: "Vermenigvuldigen", div: "Delen", back: "Terug",
+invasion: "MONSTER INVASIE!", introText: "Donkere krachten zijn de sector binnengekomen. De stadsverdediging is uitgevallen! Grijp onmiddellijk je rekenblaster. Gebruik je wiskundige snelheid om de energiekern van stroom te voorzien en neutraliseer de dreiging!",
+skip: "Rust Blaster Uit & Vecht", fire: "Schiet Blaster!", retreat: "Terugtrekken"
+},
+'es': {
+loading: "Cargando Recursos...", play: "Jugar", shop: "Tienda Cosmética",
+setupTitle: "Prepara Tu Héroe", chooseHero: "Elige Tu Personaje:",
+chooseMath: "Elige Tipo de Matemáticas:", add: "Suma", sub: "Resta",
+mult: "Multiplicación", div: "División", back: "Volver",
+invasion: "¡INVASIÓN MONSTRUO!", introText: "Fuerzas oscuras han entrado en el sector. ¡Las defensas de la ciudad cayeron! Toma tu lanzador matemático de inmediato. ¡Usa tu velocidad de cálculo para potenciar el núcleo y neutralizar la amenaza!",
+skip: "Equipar Lanzador y Luchar", fire: "¡Fuego!", retreat: "Retirada"
+},
+'fr': {
+loading: "Chargement...", play: "Jouer", shop: "Boutique de Cosmétiques",
+setupTitle: "Préparez Votre Héros", chooseHero: "Choisissez Votre Personnage :",
+chooseMath: "Choisissez le Type de Maths :", add: "Addition", sub: "Soustraction",
+mult: "Multiplication", div: "Division", back: "Retour",
+invasion: "INVASION DE MONSTRES !", introText: "Des forces obscures sont entrées dans le secteur. Les défenses sont HS ! Attrapez immédiatement votre blaster mathématique. Utilisez votre vitesse de calcul pour neutraliser la menace !",
+skip: "Équiper le Blaster & Combattre", fire: "Tirer !", retreat: "Retraite"
+},
+'el': {
+loading: "Φόρτωση...", play: "Παίξε Παιχνίδι", shop: "Κατάστημα",
+setupTitle: "Προετοιμάστε τον Ήρωα", chooseHero: "Επιλέξτε Χαρακτήρα:",
+chooseMath: "Επιλέξτε Μαθηματικά:", add: "Πρόσθεση", sub: "Αφαίρεση",
+mult: "Πολλαπλασιασμός", div: "Διαίρεση", back: "Πίσω",
+invasion: "ΕΙΣΒΟΛΗ ΤΕΡΑΤΩΝ!", introText: "Σκοτεινές δυνάμεις μπήκαν στον τομέα. Πάρτε το μαθηματικό όπλο σας αμέσως! Χρησιμοποιήστε την ταχύτητά σας για να εξουδετερώσετε την απειλή πριν παραβιάσουν τις πύλες!",
+skip: "Εξοπλιστείτε & Πολεμήστε", fire: "Πυρ!", retreat: "Υποχώρηση"
+},
+'id': {
+loading: "Memuat Aset...", play: "Mulai Game", shop: "Toko Kosmetik",
+setupTitle: "Persiapkan Pahlawanmu", chooseHero: "Pilih Karaktermu:",
+chooseMath: "Pilih Jenis Matematika:", add: "Penjumlahan", sub: "Pengurangan",
+mult: "Perkalian", div: "Pembagian", back: "Kembali",
+invasion: "INVASI MONSTER!", introText: "Kekuatan kegelapan telah memasuki sektor. Pertahanan kota hancur! Segera ambil blaster matematika Anda. Gunakan kecepatan hitung Anda untuk menetralkan ancaman!",
+skip: "Ambil Blaster & Lawan", fire: "Tembak Blaster!", retreat: "Mundur"
+},
+'it': {
+loading: "Caricamento...", play: "Gioca", shop: "Negozio Cosmetici",
+setupTitle: "Prepara il Tuo Eroe", chooseHero: "Scegli il Tuo Personaggio:",
+chooseMath: "Scegli il Tipo di Matematica:", add: "Addizione", sub: "Sottrazione",
+mult: "Moltiplicazione", div: "Divisione", back: "Indietro",
+invasion: "INVASIONE DI MOSTRI!", introText: "Forze oscure sono entrate nel settore. Le difese della città sono crollate! Prendi subito il tuo blaster matematico. Usa la tua velocità di calcolo per neutralizzare la minaccia!",
+skip: "Equipaggia Blaster e Combatti", fire: "Fuoco!", retreat: "Ritirata"
+}
+};
+// --- Game State Vars ---
+let currentLanguage = 'en-US';
+let coins = 0;
+let selectedHeroIndex = 0;
+const heroEmojis = ['🧙‍♂️', '🥷', '🤖'];
+const heroNames = ['Alpha', 'Sigma', 'Omega'];
+let activeWeapon = 'Default Blaster';
+let currentMathOperator = '+';
+let num1 = 0;
+let num2 = 0;
+let correctAnswer = 0;
+let monsterHP = 100;
+let heroHP = 100;
+// --- Core Flow Functions ---
+window.addEventListener('DOMContentLoaded', () => {
+// Fake loading system screen sequence
+setTimeout(() => {
+showScreen('main-menu');
+}, 2500);
+// Allow enter key inside game input box
+document.getElementById('math-answer').addEventListener('keyup', (e) => {
+if (e.key === 'Enter') checkAnswer();
+});
+});
+function showScreen(screenId) {
+document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+document.getElementById(screenId).classList.add('active');
+}
+function changeLanguage(langCode) {
+currentLanguage = langCode;
+const dict = translations[langCode];
+document.getElementById('loading-text').innerText = dict.loading;
+document.getElementById('btn-play').innerText = dict.play;
+document.getElementById('btn-shop').innerText = dict.shop;
+document.getElementById('title-setup').innerText = dict.setupTitle;
+document.getElementById('label-hero').innerText = dict.chooseHero;
+document.getElementById('label-math').innerText = dict.chooseMath;
+document.getElementById('btn-add').innerText = dict.add;
+document.getElementById('btn-sub').innerText = dict.sub;
+document.getElementById('btn-mult').innerText = dict.mult;
+document.getElementById('btn-div').innerText = dict.div;
+document.getElementById('btn-back-setup').innerText = dict.back;
+document.getElementById('title-invasion').innerText = dict.invasion;
+document.getElementById('text-intro').innerText = dict.introText;
+document.getElementById('btn-skip').innerText = dict.skip;
+document.getElementById('btn-fire').innerText = dict.fire;
+document.getElementById('btn-retreat').innerText = dict.retreat;
+}
+function selectCharacter(index) {
+selectedHeroIndex = index;
+document.querySelectorAll('#setup-screen .card').forEach(c => c.classList.remove('selected'));
+document.getElementById(char-${index}).classList.add('selected');
+}
+function startAdventure(operator) {
+currentMathOperator = operator;
+showScreen('intro-screen');
+}
+// --- Combat Engine ---
+function initBattle() {
+monsterHP = 100;
+heroHP = 100;
+updateHPBars();
+document.getElementById('hero-emoji').innerText = heroEmojis[selectedHeroIndex];
+document.getElementById('hud-hero').innerText = heroNames[selectedHeroIndex];
+document.getElementById('hero-weapon-display').innerText = activeWeapon;
+document.getElementById('coin-count').innerText = coins;
+generateEquation();
+}
+function generateEquation() {
+let a = Math.floor(Math.random() * 12) + 1;
+let b = Math.floor(Math.random() * 12) + 1;
+if (currentMathOperator === '+') {
+correctAnswer = a + b;
+} else if (currentMathOperator === '-') {
+// Ensure no negative answers for clear gameplay loops
+if (a < b) { let temp = a; a = b; b = temp; }
+correctAnswer = a - b;
+} else if (currentMathOperator === '*') {
+correctAnswer = a * b;
+} else if (currentMathOperator === '/') {
+// Perfect whole divisions setup
+correctAnswer = a;
+a = a * b;
+}
+num1 = a;
+num2 = b;
+document.getElementById('equation').innerText = ${num1} ${currentMathOperator === '*' ? '×' : currentMathOperator === '/' ? '÷' : currentMathOperator} ${num2};
+const inputField = document.getElementById('math-answer');
+inputField.value = '';
+inputField.focus();
+}
+function checkAnswer() {
+const userAns = parseInt(document.getElementById('math-answer').value);
+if (isNaN(userAns)) return;
+if (userAns === correctAnswer) {
+// Fire Blaster FX Animation
+const beam = document.getElementById('laser-beam');
+beam.style.animation = 'none';
+beam.offsetHeight; // Trigger reflow layout element
+beam.style.animation = 'fireLaser 0.4s linear forwards';
+// Reduce Monster Health
+monsterHP -= 25;
+if (monsterHP <= 0) {
+monsterHP = 0;
+updateHPBars();
+setTimeout(() => {
+alert("Victory! You routed the monster and collected 10 coins!");
+coins += 10;
+showScreen('main-menu');
+}, 400);
+return;
+}
+} else {
+// Wrong Answer penalty
+heroHP -= 20;
+alert(Incorrect! The correct answer was ${correctAnswer}. The monster countered!);
+if (heroHP <= 0) {
+heroHP = 0;
+updateHPBars();
+setTimeout(() => {
+alert("Defeat! The monster broke your line. Retreating to safety!");
+showScreen('main-menu');
+}, 400);
+return;
+}
+}
+updateHPBars();
+generateEquation();
+}
+function updateHPBars() {
+document.getElementById('monster-health').style.width = monsterHP + '%';
+document.getElementById('hero-health').style.width = heroHP + '%';
+}
+// --- Shop Mechanics ---
+function openShop() {
+document.getElementById('shop-coin-count').innerText = coins;
+showScreen('shop-screen');
+}
+function buyItem(itemName, cost) {
+if (coins >= cost) {
+coins -= cost;
+activeWeapon = itemName;
+document.getElementById('shop-coin-count').innerText = coins;
+alert(Successfully bought and equipped ${itemName}!);
+} else {
+alert("Insufficient coins! Win more math battles in Monster Invasion to earn currency.");
+}
+}
