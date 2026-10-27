@@ -43,32 +43,9 @@
             text-align: center;
         }
 
-        /* Enforce absolute visibility layout rule */
         .screen.active {
             display: flex !important;
             z-index: 10;
-        }
-
-        /* Loading Screen Priority Setup */
-        #loading-screen {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            display: flex;
-            z-index: 99999;
-        }
-
-        .spinner {
-            width: 80px;
-            height: 80px;
-            border: 8px solid rgba(255,255,255,0.1);
-            border-top: 8px solid var(--accent);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         /* UI Elements */
@@ -121,7 +98,6 @@
             transform: scale(1.05);
         }
 
-        /* CSS Vector Graphic Designs (No Emojis) */
         .avatar-container {
             width: 70px;
             height: 70px;
@@ -144,28 +120,24 @@
             font-size: 1.4rem;
         }
 
-        /* Hero 1: Striking Cyber Crimson */
         .alpha-style {
             background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
             border: 2px solid #ff0844;
             color: white;
         }
 
-        /* Hero 2: Deep Neon Electric Blue */
         .sigma-style {
             background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
             border: 2px solid #00c6ff;
             color: white;
         }
 
-        /* Hero 3: Sleek Bright Mech Gold */
         .omega-style {
             background: linear-gradient(135deg, #f9d423 0%, #ff4e50 100%);
             border: 2px solid #f9d423;
             color: white;
         }
 
-        /* Enemy Target: Dark Alien Violet */
         .monster-style {
             background: linear-gradient(135deg, #b33939 0%, #2c003e 100%);
             border: 2px solid #ff5252;
@@ -306,14 +278,8 @@
 </head>
 <body>
 
-    <!-- 1. LOADING SCREEN -->
-    <div id="loading-screen" class="screen active">
-        <div class="spinner"></div>
-        <h2 id="loading-text">Loading Assets...</h2>
-    </div>
-
-    <!-- 2. MAIN MENU SCREEN -->
-    <div id="main-menu" class="screen">
+    <!-- MAIN MENU SCREEN (Loads Instantly) -->
+    <div id="main-menu" class="screen active">
         <h1>MathHeroes</h1>
         
         <div style="margin-bottom: 25px;">
@@ -336,11 +302,10 @@
         <footer id="studio-footer">© 2026 Zakir Studio. All Rights Reserved.</footer>
     </div>
 
-    <!-- 3. SETUP SCREEN (Character & Math Type Selection) -->
+    <!-- SETUP SCREEN -->
     <div id="setup-screen" class="screen">
         <h2 id="title-setup">Prepare Your Hero</h2>
         
-        <!-- Character Choice Cards (Strict Design Layout - No Emojis) -->
         <h3 id="label-hero" style="margin-top:15px;">Choose Your Character:</h3>
         <div class="grid">
             <div class="card selected" id="char-0" onclick="selectCharacter(0)">
@@ -350,23 +315,31 @@
                 <div style="font-weight: bold;">Alpha</div>
             </div>
             <div class="card" id="char-1" onclick="selectCharacter(1)">
-                S
+                <div class="avatar-container">
+                    <div class="avatar-shape sigma-style">S</div>
+                </div>
+                <div style="font-weight: bold;">Sigma</div>
+            </div>
+            <div class="card" id="char-2" onclick="selectCharacter(2)">
+                <div class="avatar-container">
+                    <div class="avatar-shape omega-style">O</div>
+                </div>
+                <div style="font-weight: bold;">Omega</div>
+            </div>
+        </div>
 
-Sigma
+        <h3 id="label-math">Choose Math Type:</h3>
+        <div class="grid">
+            <button class="btn" id="btn-add" onclick="startAdventure('+')">Addition</button>
+            <button class="btn" id="btn-sub" onclick="startAdventure('-')">Subtraction</button>
+            <button class="btn" id="btn-mult" onclick="startAdventure('*')">Multiplication</button>
+            <button class="btn" id="btn-div" onclick="startAdventure('/')">Division</button>
+        </div>
+        
+        <button class="btn" style="background:#333;" id="btn-back-setup" onclick="showScreen('main-menu')">Back</button>
+    </div>
 
-
-
-O
-
-Omega
-
-Choose Math Type:
-
-Addition
-Subtraction
-Multiplication
-Division
-Back
+    <!-- INTRO SCREEN -->
 MONSTER INVASION!
 
 Dark forces have entered the sector. The city defenses are down! Grab your calculation blaster immediately. Use your mathematical speed to power the energy core and neutralize the threat before they breach the gates!
@@ -400,14 +373,16 @@ Plasma Cannon
 Hero Cape
 15 Coins
 
+
 🛡️ SUIT
 Cyber Armor
 40 Coins
+
 Back to Menu
 // --- Translations Dictionary ---
 const translations = {
 'en-US': {
-loading: "Loading Assets...", play: "Play Game", shop: "Cosmetic Shop",
+play: "Play Game", shop: "Cosmetic Shop",
 setupTitle: "Prepare Your Hero", chooseHero: "Choose Your Character:",
 chooseMath: "Choose Math Type:", add: "Addition", sub: "Subtraction",
 mult: "Multiplication", div: "Division", back: "Back",
@@ -415,7 +390,7 @@ invasion: "MONSTER INVASION!", introText: "Dark forces have entered the sector. 
 skip: "Equip Blaster & Fight", fire: "Fire Blaster!", retreat: "Retreat"
 },
 'en-GB': {
-loading: "Loading Assets...", play: "Play Game", shop: "Cosmetic Shop",
+play: "Play Game", shop: "Cosmetic Shop",
 setupTitle: "Prepare Your Hero", chooseHero: "Choose Your Character:",
 chooseMath: "Choose Maths Type:", add: "Addition", sub: "Subtraction",
 mult: "Times Tables", div: "Division", back: "Back",
@@ -423,7 +398,7 @@ invasion: "MONSTER INVASION!", introText: "Dark forces have entered the sector. 
 skip: "Equip Blaster & Fight", fire: "Fire Blaster!", retreat: "Retreat"
 },
 'nl': {
-loading: "Activa laden...", play: "Speel Spel", shop: "Cosmetische Winkel",
+play: "Speel Spel", shop: "Cosmetische Winkel",
 setupTitle: "Bereid Je Held Voor", chooseHero: "Kies Je Personage:",
 chooseMath: "Kies Rekentype:", add: "Optellen", sub: "Aftrekken",
 mult: "Vermenigvuldigen", div: "Delen", back: "Terug",
@@ -431,7 +406,7 @@ invasion: "MONSTER INVASIE!", introText: "Donkere krachten zijn de sector binnen
 skip: "Rust Blaster Uit & Vecht", fire: "Schiet Blaster!", retreat: "Terugtrekken"
 },
 'es': {
-loading: "Cargando Recursos...", play: "Jugar", shop: "Tienda Cosmética",
+play: "Jugar", shop: "Tienda Cosmética",
 setupTitle: "Prepara Tu Héroe", chooseHero: "Elige Tu Personaje:",
 chooseMath: "Elige Tipo de Matemáticas:", add: "Suma", sub: "Resta",
 mult: "Multiplicación", div: "División", back: "Volver",
@@ -439,7 +414,7 @@ invasion: "¡INVASIÓN MONSTRUO!", introText: "Fuerzas oscuras han entrado en el
 skip: "Equipar Lanzador y Luchar", fire: "¡Fuego!", retreat: "Retirada"
 },
 'fr': {
-loading: "Chargement...", play: "Jouer", shop: "Boutique de Cosmétiques",
+play: "Jouer", shop: "Boutique de Cosmétiques",
 setupTitle: "Préparez Votre Héros", chooseHero: "Choisissez Votre Personnage :",
 chooseMath: "Choisissez le Type de Maths :", add: "Addition", sub: "Soustraction",
 mult: "Multiplication", div: "Division", back: "Retour",
@@ -447,7 +422,7 @@ invasion: "INVASION DE MONSTRES !", introText: "Des forces obscures sont entrée
 skip: "Équiper le Blaster & Combattre", fire: "Tirer !", retreat: "Retraite"
 },
 'el': {
-loading: "Φόρτωση...", play: "Παίξε Παιχνίδι", shop: "Κατάστημα",
+play: "Παίξε Παιχνίδι", shop: "Κατάστημα",
 setupTitle: "Προετοιμάστε τον Ήρωα", chooseHero: "Επιλέξτε Χαρακτήρα:",
 chooseMath: "Επιλέξτε Μαθηματικά:", add: "Πρόσθεση", sub: "Αφαίρεση",
 mult: "Πολλαπλασιασμός", div: "Διαίρεση", back: "Πίσω",
@@ -455,7 +430,7 @@ invasion: "ΕΙΣΒΟΛΗ ΤΕΡΑΤΩΝ!", introText: "Σκοτεινές δυ�
 skip: "Εξοπλιστείτε & Πολεμήστε", fire: "Πυρ!", retreat: "Υποχώρηση"
 },
 'id': {
-loading: "Memuat Aset...", play: "Mulai Game", shop: "Toko Kosmetik",
+play: "Mulai Game", shop: "Toko Kosmetik",
 setupTitle: "Persiapkan Pahlawanmu", chooseHero: "Pilih Karaktermu:",
 chooseMath: "Pilih Jenis Matematika:", add: "Penjumlahan", sub: "Pengurangan",
 mult: "Perkalian", div: "Pembagian", back: "Kembali",
@@ -463,7 +438,7 @@ invasion: "INVASI MONSTER!", introText: "Kekuatan kegelapan telah memasuki sekto
 skip: "Ambil Blaster & Lawan", fire: "Tembak Blaster!", retreat: "Mundur"
 },
 'it': {
-loading: "Caricamento...", play: "Gioca", shop: "Negozio Cosmetici",
+play: "Gioca", shop: "Negozio Cosmetici",
 setupTitle: "Prepara il Tuo Eroe", chooseHero: "Scegli il Tuo Personaggio:",
 chooseMath: "Scegli il Tipo di Matematica:", add: "Addizione", sub: "Sottrazione",
 mult: "Moltiplicazione", div: "Divisione", back: "Indietro",
@@ -475,7 +450,6 @@ skip: "Equipaggia Blaster e Combatti", fire: "Fuoco!", retreat: "Ritirata"
 let currentLanguage = 'en-US';
 let coins = 0;
 let selectedHeroIndex = 0;
-// Character Asset Arrays
 const heroStyles = ['alpha-style', 'sigma-style', 'omega-style'];
 const heroLetters = ['A', 'S', 'O'];
 const heroNames = ['Alpha', 'Sigma', 'Omega'];
@@ -486,17 +460,7 @@ let num2 = 0;
 let correctAnswer = 0;
 let monsterHP = 100;
 let heroHP = 100;
-// --- Safe Lifecycle Initialization Fix ---
-function runGameEngineInit() {
-// Immediate automated loading screen simulation clearance
-setTimeout(() => {
-const loader = document.getElementById('loading-screen');
-if (loader) {
-loader.style.setProperty('display', 'none', 'important');
-}
-showScreen('main-menu');
-}, 1500);
-// Add input submit field listeners
+function initInputListeners() {
 const inputField = document.getElementById('math-answer');
 if (inputField) {
 inputField.addEventListener('keyup', (e) => {
@@ -504,11 +468,10 @@ if (e.key === 'Enter') checkAnswer();
 });
 }
 }
-// Execute regardless of browser load delays
 if (document.readyState === 'loading') {
-document.addEventListener('DOMContentLoaded', runGameEngineInit);
+document.addEventListener('DOMContentLoaded', initInputListeners);
 } else {
-runGameEngineInit();
+initInputListeners();
 }
 function showScreen(screenId) {
 document.querySelectorAll('.screen').forEach(s => {
@@ -525,7 +488,6 @@ function changeLanguage(langCode) {
 currentLanguage = langCode;
 const dict = translations[langCode];
 if(!dict) return;
-document.getElementById('loading-text').innerText = dict.loading;
 document.getElementById('btn-play').innerText = dict.play;
 document.getElementById('btn-shop').innerText = dict.shop;
 document.getElementById('title-setup').innerText = dict.setupTitle;
@@ -556,7 +518,6 @@ function initBattle() {
 monsterHP = 100;
 heroHP = 100;
 updateHPBars();
-// Apply selected vector style token dynamically to battle view
 const battleBadge = document.getElementById('hero-battle-badge');
 battleBadge.className = 'avatar-shape ' + heroStyles[selectedHeroIndex];
 battleBadge.innerText = heroLetters[selectedHeroIndex];
@@ -590,7 +551,6 @@ function checkAnswer() {
 const userAns = parseInt(document.getElementById('math-answer').value);
 if (isNaN(userAns)) return;
 if (userAns === correctAnswer) {
-// Laser blaster fire visual effect tracking
 const beam = document.getElementById('laser-beam');
 beam.style.animation = 'none';
 beam.offsetHeight;
@@ -638,6 +598,6 @@ activeWeapon = itemName;
 document.getElementById('shop-coin-count').innerText = coins;
 alert(Successfully bought and equipped ${itemName}!);
 } else {
-alert("Insufficient coins! Win more math battles in Monster Invasion to earn currency.");
+alert("Insufficient coins! Win more math battles in Monster Invasion to earn more coins.");
 }
 }
