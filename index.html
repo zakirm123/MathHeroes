@@ -43,13 +43,17 @@
             text-align: center;
         }
 
+        /* Enforce absolute visibility layout rule */
         .screen.active {
-            display: flex;
+            display: flex !important;
+            z-index: 10;
         }
 
-        /* Loading Screen */
+        /* Loading Screen Priority Setup */
         #loading-screen {
             background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            z-index: 99999;
         }
 
         .spinner {
@@ -117,9 +121,56 @@
             transform: scale(1.05);
         }
 
-        .avatar-placeholder {
-            font-size: 4rem;
-            margin-bottom: 10px;
+        /* CSS Vector Graphic Designs (No Emojis) */
+        .avatar-container {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 15px auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .avatar-shape {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
+
+        /* Hero 1: Striking Cyber Crimson */
+        .alpha-style {
+            background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+            border: 2px solid #ff0844;
+            color: white;
+        }
+
+        /* Hero 2: Deep Neon Electric Blue */
+        .sigma-style {
+            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+            border: 2px solid #00c6ff;
+            color: white;
+        }
+
+        /* Hero 3: Sleek Bright Mech Gold */
+        .omega-style {
+            background: linear-gradient(135deg, #f9d423 0%, #ff4e50 100%);
+            border: 2px solid #f9d423;
+            color: white;
+        }
+
+        /* Enemy Target: Dark Alien Violet */
+        .monster-style {
+            background: linear-gradient(135deg, #b33939 0%, #2c003e 100%);
+            border: 2px solid #ff5252;
+            color: #ff5252;
+            border-radius: 50%;
         }
 
         /* Footer */
@@ -167,21 +218,20 @@
         .actor {
             position: absolute;
             bottom: 40px;
-            font-size: 4rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             transition: all 0.3s ease;
         }
 
-        #hero-sprite { left: 10%; }
-        #monster-sprite { right: 10%; }
+        #hero-sprite { left: 15%; }
+        #monster-sprite { right: 15%; }
 
         .health-bar {
             width: 80px;
             height: 8px;
             background: #555;
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
+            margin-bottom: 10px;
             border-radius: 4px;
             overflow: hidden;
         }
@@ -223,26 +273,26 @@
             outline: none;
         }
 
-        /* Projectile FX */
+        /* Projectile FX Elements */
         .laser {
             position: absolute;
             height: 6px;
             background: #00ffff;
             box-shadow: 0 0 10px #00ffff;
             border-radius: 3px;
-            top: 60%;
-            left: 20%;
+            top: 65%;
+            left: 25%;
             width: 0;
             z-index: 10;
+            pointer-events: none;
         }
 
         @keyframes fireLaser {
-            0% { left: 20%; width: 0; opacity: 1; }
-            50% { width: 50px; }
-            100% { left: 80%; width: 0; opacity: 0; }
+            0% { left: 25%; width: 0; opacity: 1; }
+            50% { width: 60px; }
+            100% { left: 75%; width: 0; opacity: 0; }
         }
 
-        /* Select drop downs */
         select {
             padding: 10px 20px;
             font-size: 1rem;
@@ -290,47 +340,45 @@
     <div id="setup-screen" class="screen">
         <h2 id="title-setup">Prepare Your Hero</h2>
         
-        <!-- Character Choices -->
+        <!-- Character Choice Cards (Strict Design Layout - No Emojis) -->
         <h3 id="label-hero" style="margin-top:15px;">Choose Your Character:</h3>
         <div class="grid">
             <div class="card selected" id="char-0" onclick="selectCharacter(0)">
-                <div class="avatar-placeholder">🧙‍♂️</div>
+                <div class="avatar-container">
+                    <div class="avatar-shape alpha-style">A</div>
+                </div>
                 <div style="font-weight: bold;">Alpha</div>
             </div>
             <div class="card" id="char-1" onclick="selectCharacter(1)">
-                <div class="avatar-placeholder">🥷</div>
-                <div style="font-weight: bold;">Sigma</div>
-            </div>
-            <div class="card" id="char-2" onclick="selectCharacter(2)">
-                <div class="avatar-placeholder">🤖</div>
-                <div style="font-weight: bold;">Omega</div>
-            </div>
-        </div>
+                S
 
-        <!-- Math Mode Choices -->
-        <h3 id="label-math">Choose Math Type:</h3>
-        <div class="grid">
-            <button class="btn" id="btn-add" onclick="startAdventure('+')">Addition</button>
-            <button class="btn" id="btn-sub" onclick="startAdventure('-')">Subtraction</button>
-            <button class="btn" id="btn-mult" onclick="startAdventure('*')">Multiplication</button>
-            <button class="btn" id="btn-div" onclick="startAdventure('/')">Division</button>
-        </div>
-        
-        <button class="btn" style="background:#333;" id="btn-back-setup" onclick="showScreen('main-menu')">Back</button>
-    </div>
+Sigma
 
-    <!-- 4. INTRO CINEMATIC SCREEN -->
-    <div id="intro-screen" class="screen">
-        <div class="intro-box">
-            <h2 id="title-invasion" style="color:var(--danger); margin-bottom: 20px;">MONSTER INVASION!</h2>
-            <p id="text-intro" style="font-size: 1.2rem; line-height: 1.6; margin-bottom: 30px;">
-                Dark forces have entered the sector. The city defenses are down! Grab your calculation blaster immediately. Use your mathematical speed to power the energy core and neutralize the threat before they breach the gates!
-            </p>
-            <button class="btn" id="btn-skip" onclick="showScreen('battle-screen'); initBattle();">Equip Blaster & Fight</button>
+
+
+O
+
+Omega
+
+Choose Math Type:
+
+Addition
+Subtraction
+Multiplication
+Division
+Back
+MONSTER INVASION!
+
+Dark forces have entered the sector. The city defenses are down! Grab your calculation blaster immediately. Use your mathematical speed to power the energy core and neutralize the threat before they breach the gates!
+
+Equip Blaster & Fight
+
 Hero: Default Blaster
 🪙 0
-🧙‍♂️
-👹
+A
+
+M
+
 
 2 + 2
 
@@ -338,23 +386,23 @@ Fire Blaster!
 Retreat
 Cosmetic Shop
 Your Coins: 🪙 0
-🔫
+⚡ BLSTR
 Laser Blaster
 20 Coins
-💥
+
+
+🔥 CANNON
 Plasma Cannon
 50 Coins
 
 
-🧣
+⭐ CAPE
 Hero Cape
 15 Coins
 
-
-🛡️
+🛡️ SUIT
 Cyber Armor
 40 Coins
-
 Back to Menu
 // --- Translations Dictionary ---
 const translations = {
@@ -423,11 +471,13 @@ invasion: "INVASIONE DI MOSTRI!", introText: "Forze oscure sono entrate nel sett
 skip: "Equipaggia Blaster e Combatti", fire: "Fuoco!", retreat: "Ritirata"
 }
 };
-// --- Game State Vars ---
+// --- Game Setup State ---
 let currentLanguage = 'en-US';
 let coins = 0;
 let selectedHeroIndex = 0;
-const heroEmojis = ['🧙‍♂️', '🥷', '🤖'];
+// Character Asset Arrays
+const heroStyles = ['alpha-style', 'sigma-style', 'omega-style'];
+const heroLetters = ['A', 'S', 'O'];
 const heroNames = ['Alpha', 'Sigma', 'Omega'];
 let activeWeapon = 'Default Blaster';
 let currentMathOperator = '+';
@@ -436,24 +486,45 @@ let num2 = 0;
 let correctAnswer = 0;
 let monsterHP = 100;
 let heroHP = 100;
-// --- Core Flow Functions ---
-window.addEventListener('DOMContentLoaded', () => {
-// Fake loading system screen sequence
+// --- Safe Lifecycle Initialization Fix ---
+function runGameEngineInit() {
+// Immediate automated loading screen simulation clearance
 setTimeout(() => {
+const loader = document.getElementById('loading-screen');
+if (loader) {
+loader.style.setProperty('display', 'none', 'important');
+}
 showScreen('main-menu');
-}, 2500);
-// Allow enter key inside game input box
-document.getElementById('math-answer').addEventListener('keyup', (e) => {
+}, 1500);
+// Add input submit field listeners
+const inputField = document.getElementById('math-answer');
+if (inputField) {
+inputField.addEventListener('keyup', (e) => {
 if (e.key === 'Enter') checkAnswer();
 });
-});
+}
+}
+// Execute regardless of browser load delays
+if (document.readyState === 'loading') {
+document.addEventListener('DOMContentLoaded', runGameEngineInit);
+} else {
+runGameEngineInit();
+}
 function showScreen(screenId) {
-document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-document.getElementById(screenId).classList.add('active');
+document.querySelectorAll('.screen').forEach(s => {
+s.classList.remove('active');
+s.style.display = 'none';
+});
+const target = document.getElementById(screenId);
+if(target) {
+target.classList.add('active');
+target.style.display = 'flex';
+}
 }
 function changeLanguage(langCode) {
 currentLanguage = langCode;
 const dict = translations[langCode];
+if(!dict) return;
 document.getElementById('loading-text').innerText = dict.loading;
 document.getElementById('btn-play').innerText = dict.play;
 document.getElementById('btn-shop').innerText = dict.shop;
@@ -480,12 +551,15 @@ function startAdventure(operator) {
 currentMathOperator = operator;
 showScreen('intro-screen');
 }
-// --- Combat Engine ---
+// --- Math Battle Core Engine ---
 function initBattle() {
 monsterHP = 100;
 heroHP = 100;
 updateHPBars();
-document.getElementById('hero-emoji').innerText = heroEmojis[selectedHeroIndex];
+// Apply selected vector style token dynamically to battle view
+const battleBadge = document.getElementById('hero-battle-badge');
+battleBadge.className = 'avatar-shape ' + heroStyles[selectedHeroIndex];
+battleBadge.innerText = heroLetters[selectedHeroIndex];
 document.getElementById('hud-hero').innerText = heroNames[selectedHeroIndex];
 document.getElementById('hero-weapon-display').innerText = activeWeapon;
 document.getElementById('coin-count').innerText = coins;
@@ -497,13 +571,11 @@ let b = Math.floor(Math.random() * 12) + 1;
 if (currentMathOperator === '+') {
 correctAnswer = a + b;
 } else if (currentMathOperator === '-') {
-// Ensure no negative answers for clear gameplay loops
 if (a < b) { let temp = a; a = b; b = temp; }
 correctAnswer = a - b;
 } else if (currentMathOperator === '*') {
 correctAnswer = a * b;
 } else if (currentMathOperator === '/') {
-// Perfect whole divisions setup
 correctAnswer = a;
 a = a * b;
 }
@@ -518,32 +590,30 @@ function checkAnswer() {
 const userAns = parseInt(document.getElementById('math-answer').value);
 if (isNaN(userAns)) return;
 if (userAns === correctAnswer) {
-// Fire Blaster FX Animation
+// Laser blaster fire visual effect tracking
 const beam = document.getElementById('laser-beam');
 beam.style.animation = 'none';
-beam.offsetHeight; // Trigger reflow layout element
+beam.offsetHeight;
 beam.style.animation = 'fireLaser 0.4s linear forwards';
-// Reduce Monster Health
 monsterHP -= 25;
 if (monsterHP <= 0) {
 monsterHP = 0;
 updateHPBars();
 setTimeout(() => {
-alert("Victory! You routed the monster and collected 10 coins!");
+alert("Victory! You defeated the monster invasion and collected 10 coins!");
 coins += 10;
 showScreen('main-menu');
 }, 400);
 return;
 }
 } else {
-// Wrong Answer penalty
 heroHP -= 20;
-alert(Incorrect! The correct answer was ${correctAnswer}. The monster countered!);
+alert(Incorrect! The correct answer was ${correctAnswer}. The monster attacked!);
 if (heroHP <= 0) {
 heroHP = 0;
 updateHPBars();
 setTimeout(() => {
-alert("Defeat! The monster broke your line. Retreating to safety!");
+alert("Defeat! The monsters bypassed your line. Retreating to safety!");
 showScreen('main-menu');
 }, 400);
 return;
